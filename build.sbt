@@ -7,8 +7,5 @@ scalaVersion := "2.10.6"
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.2.3"
 // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.2.3"
-// https://mvnrepository.com/artifact/org.apache.spark/spark-launcher
-libraryDependencies += "org.apache.spark" %% "spark-launcher" % "2.2.3"
-// https://mvnrepository.com/artifact/org.apache.spark/spark-tools
-libraryDependencies += "org.apache.spark" %% "spark-tools" % "1.1.1"
+
 

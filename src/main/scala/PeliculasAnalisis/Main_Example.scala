@@ -1,32 +1,22 @@
 package PeliculasAnalisis
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.functions.split
+import org.apache.spark.sql.functions._
 
 object Main_Example {
 
   def main(args: Array[String])
   {
-    val conf = new SparkConf().setAppName("Peliculas").setMaster("local").set("spark.executor.memory", "1g")
-    val sc = new SparkContext(conf)
-
-    /*val rdd = sc.textFile("C:\\Users\\Gustavo Rangel\\Desktop\\Spark con Scala\\u.data")
-    val coun = rdd.count()
-    rdd.collect().foreach(println)
-    println(s"$coun")*/
-
-    val spark = SparkSession.builder().appName("Peliculas").master("local").getOrCreate()
-    val df = spark.read.csv("C:\\Users\\Gustavo Rangel\\Desktop\\Spark con Scala\\heart.csv").toDF("age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal","target")
+    val spark = SparkSession.builder().appName("Corazon").master("local").getOrCreate()
+    val ds:Dataset[String] = spark.read.textFile("C:\\Users\\Gustavo Rangel\\IdeaProjects\\PeliculasAnalisis\\Analisis\\src\\main\\scala\\resources\\u.data")
+    val df = ds.withColumn("value", split(col("value"), "\t")).select((0 until 4).map(i => col("value").getItem(i).as(s"col$i")): _*).toDF("movie_id","user_id","movie_rating","release_date")
     val skipable_first_row = df.first()
-    println(s"$skipable_first_row")
     val df1 = df.filter(row => row != skipable_first_row)
-    df1.show()
-    val coun = df1.count()
-    println(s"$coun")
-    filter(df)
-  }
+    //df1.show()
+    val fil = df1.groupBy("movie_id").count()
+    val res = fil.orderBy(desc("count")).toDF("movie_id", "# Vistas")
+    res.show(10)
 
-  def filter (dataFrame: DataFrame): Unit ={
-    dataFrame.show
   }
 }
